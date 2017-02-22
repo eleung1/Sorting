@@ -1,90 +1,82 @@
 package com.eric.sort;
 
-public class MergeSort
-{
+/**
+ * Merge sort.
+ * 
+ * Worst: O(nlogn)
+ * Best: O(nlogn)
+ * Avg: O(nlogn)
+ * 
+ * @author Eric Leung
+ *
+ */
+public class MergeSort {
   
-  public static int[] mergeSort(int[] arr)
-  {
-    if ( arr.length == 1 )
-    {
-      return arr;
-    }
+  /**
+   * Merge sort entry point.
+   * 
+   * @param arr The array to be sorted.
+   * @param start The start index of the portion to be sorted. Inclusive.
+   * @param end The end index of the portion to be sorted.  Inclusive.
+   */
+  public static void mergeSort(int[] arr, int start, int end) {
     
-    System.out.println("arr.length/2="+arr.length/2);
-    System.out.println("arr.length - arr.length/2="+(arr.length - arr.length/2));
+    // base case, array size 1 or less.
+    if ( end-start <= 0 ) return;
     
-    int[] arr1 = new int[arr.length/2];
-    int[] arr2 = new int[arr.length - arr.length/2];
+    int mid = (start+end) / 2;
     
-    for ( int i = 0; i < arr.length/2; i ++ )
-    {
-      arr1[i] = arr[i];  
-    }
-    
-    int j = 0;
-    for ( int i = arr.length/2; i < arr.length; i ++ )
-    {
-      arr2[j] = arr[i];
-      j++;
-    }
-    
-    arr1 = mergeSort(arr1);
-    arr2 = mergeSort(arr2);
-    
-    return merge(arr1, arr2);
+    mergeSort(arr, start, mid);
+    mergeSort(arr, mid+1, end);
+    merge(arr, start, mid, end);
   }
   
-  public static int[] merge(int[] arr1, int[] arr2)
-  {
-    int length = arr1.length + arr2.length;
+  /**
+   * Merge step.  Merging sorted left and sorted right arrays.
+   * 
+   * The left array is between start and mid.
+   * The right array is between mid+1 and end.
+   * 
+   * @param arr The array to be sorted.
+   * @param start The start index of the portion to be merged.  Inclusive.
+   * @param mid The mid index of the portion to be merged. Inclusive.
+   * @param end The end index of the portion to be merged. Inclusive.
+   */
+  public static void merge(int[] arr, int start, int mid, int end) {
+    int leftIdx = start;
+    int rightIdx = mid+1;
     
-    int[] merged = new int[length];
+    int size = arr.length; // size of the portion to be merged
+    int tempIdx = 0;
+    int[] tempArr = new int[size]; // temp array to hold the merged order
     
-    int arr1Index = 0; 
-    int arr2Index = 0;
-    
-    for (int i = 0; i < length; i ++ )
-    {
-      if ( arr1Index < arr1.length && arr2Index < arr2.length)
-      {
-        if ( arr1[arr1Index] < arr2[arr2Index] )
-        {
-          merged[i] = arr1[arr1Index];
-          arr1Index++;
-        }
-        else
-        {
-          merged[i] = arr2[arr2Index];
-          arr2Index++;
-        }
-      }
-      else
-      {
-        if ( arr1Index >= arr1.length )
-        {
-          merged[i] = arr2[arr2Index];
-          arr2Index++;
-        }
-        else if ( arr2Index >= arr2.length )
-        {
-          merged[i] = arr1[arr1Index];
-          arr1Index++;
-        }
+    while ( leftIdx <= mid && rightIdx <= end ) {
+      if ( arr[leftIdx] <= arr[rightIdx] ) {
+        tempArr[tempIdx++] = arr[leftIdx++];
+      } else {
+        tempArr[tempIdx++] = arr[rightIdx++];
       }
     }
     
-    return merged;
+    while ( leftIdx <= mid ) {
+      tempArr[tempIdx++] = arr[leftIdx++];
+    }
+    
+    while ( rightIdx <= end ) {
+      tempArr[tempIdx++] = arr[rightIdx++];
+    }
+    
+    // Putting temp array back into the original array.
+    for ( int i = start; i <= end; i ++ ) {
+      arr[i] = tempArr[i-start];
+    }
+    
   }
   
-  public static void main(String[] args)
-  {
-    int[] arr = new int[]{5,1,3,2,4};
+  public static void main(String[] args) {
+    int[] arr = new int[]{8, 5, 1, 7, 6, 9, 2};
+    mergeSort(arr, 0, arr.length-1);
     
-    int[] sorted = mergeSort(arr);
-    
-    for ( int i = 0; i < sorted.length; i ++ )
-    {
-      System.out.print(sorted[i] + " ");
-    }
+    for ( int i : arr ) System.out.print(i + " ");
   }
 }
